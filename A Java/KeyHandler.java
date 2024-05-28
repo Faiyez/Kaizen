@@ -4,19 +4,22 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class KeyHandler implements KeyListener, MouseListener {
-    static DemoPanel dp;
-
+    public DemoPanel dp;
+    public Node node;
+    int goalCol, goalRow;
+    
     public KeyHandler(DemoPanel dp) {
         this.dp = dp;
     }
-    public static DemoPanel getDemopanel(){
-        return dp;
+    public void refreshGoalNode(int col, int row){
+        dp.refreshPanel();
+        dp.setGoalNode(col, row);
+        System.out.println("From Node to kh");
     }
-
     @Override
     public void keyTyped(KeyEvent e) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'keyTyped'");
+        //throw new UnsupportedOperationException("Unimplemented method 'keyTyped'");
     }
 
     @Override
@@ -28,42 +31,35 @@ public class KeyHandler implements KeyListener, MouseListener {
         }
     }
 
-    @Override
+    
     public void keyReleased(KeyEvent e) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'keyReleased'");
+        //throw new UnsupportedOperationException("Unimplemented method 'keyReleased'");
     }
-
-    @Override
+ 
     public void mouseClicked(MouseEvent e) {
         int col = e.getX();
         int row = e.getY();
-        System.out.println("******** Mouse clicked ********");
-        dp.setGoalNode(col, row);
-        dp.autoSearch();
+        if (e.getButton() == MouseEvent.BUTTON1) {
+            //dp.setNodes();
+            
+            System.out.println("From Key Handler Left click on node at (" + col + ", " + row + ")");
+        } else if (e.getButton() == MouseEvent.BUTTON3) {
+            System.out.println("From Key Handler Right click on node at (" + col + ", " + row + ")");
+        }
+        
     }
 
     @Override
-    public void mousePressed(java.awt.event.MouseEvent e) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'mousePressed'");
-    }
+    public void mousePressed(MouseEvent e) {}
 
     @Override
-    public void mouseReleased(java.awt.event.MouseEvent e) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'mouseReleased'");
-    }
+    public void mouseReleased(MouseEvent e) {}
 
     @Override
-    public void mouseEntered(java.awt.event.MouseEvent e) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'mouseEntered'");
-    }
+    public void mouseEntered(MouseEvent e) {}
 
     @Override
-    public void mouseExited(java.awt.event.MouseEvent e) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'mouseExited'");
-    }
+    public void mouseExited(MouseEvent e) {}
 }
+

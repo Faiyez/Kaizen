@@ -9,4 +9,7 @@ public class Main{
         window.setLocationRelativeTo(null);
         window.setVisible(true);
     }
+    public void addPanel(){
+        
+    }
 }

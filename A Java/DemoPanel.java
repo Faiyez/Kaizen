@@ -3,16 +3,15 @@ import java.awt.Dimension;
 import javax.swing.JPanel;
 import java.awt.GridLayout;
 import java.util.ArrayList;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 // Note: Maybe we can change the background to the map of the window.
+// IF error call search node again
 public class DemoPanel extends JPanel{
     final int maxCol = 15;
-    final int maxRow = 10;
+    final int maxRow = 15;
     final int nodeSize = 70;
     final int screenWidth = nodeSize * maxCol;
     final int screenHeight = nodeSize * maxRow;
-
+    int goalRow, goalCol;
     Node[][] node = new Node[maxCol][maxRow];
     Node startNode, goalNode, currentNode;
     ArrayList<Node> openList = new ArrayList<>();
@@ -20,18 +19,54 @@ public class DemoPanel extends JPanel{
     ArrayList<Node> openListToCheck = new ArrayList<>();
     boolean goalReached = false;
     int step = 0;
-
+    KeyHandler keyHandler;
     public DemoPanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.black);
         this.setLayout(new GridLayout(maxRow, maxCol));
-        this.addKeyListener(new KeyHandler(this));
+        keyHandler = new KeyHandler(this);
+        this.addKeyListener(keyHandler);
+        //this.addMouseListener(keyHandler);        
         this.setFocusable(true);
-        
+        this.requestFocus();
+        setNodes();
+        setStartNode(3,6);
+        setGoalNode(11,3);
+        setSolidNode(10,2);
+        setSolidNode(10,4);
+        setSolidNode(10,3);
+        setSolidNode(10,5);
+        setSolidNode(10,6);
+        setSolidNode(10,7);
+    }
+    // public DemoPanel(int goalRow, int goalCol){
+    //     this.goalCol = goalCol;
+    //     this.goalRow = goalRow;
+    //     setGoalNode(goalCol, goalRow);
+    //     this.setPreferredSize(new Dimension(screenWidth, screenHeight));
+    //     this.setBackground(Color.black);
+    //     this.setLayout(new GridLayout(maxRow, maxCol));
+    //     //KeyHandler keyHandler = new KeyHandler(this);
+    //     //this.addKeyListener(keyHandler);
+    //     //this.addMouseListener(keyHandler);        
+    //     this.setFocusable(true);
+    //     this.requestFocus();
+    //     setNodes();
+    //     setStartNode(3,6);
+    //     //setGoalNode(11,3);
+    //     setSolidNode(10,2);
+    //     setSolidNode(10,4);
+    //     setSolidNode(10,3);
+    //     setSolidNode(10,5);
+    //     setSolidNode(10,6);
+    //     setSolidNode(10,7);
+    // }
+    
+    void setNodes(){
         int col = 0;
         int row = 0;
         while(col < maxCol && row < maxRow){
-            node[col][row] = new Node(col,row);
+            node[col][row] = new Node(col,row,keyHandler);
             this.add(node[col][row]);
             col++;
             if(col == maxCol){
@@ -39,53 +74,14 @@ public class DemoPanel extends JPanel{
                 row++;
             }
         }
-        setStartNode(3,6);
-        //setGoalNode(11,3);
-        setSolidNode(10,2);
-        setSolidNode(10,4);
-        setSolidNode(10,3);
-        setSolidNode(10,5);
-        setSolidNode(10,6);
-        setSolidNode(10,7);
-        //setCostOnNodes();
     }
-    
-    private void setStartNode(int col, int row){
+    void setStartNode(int col, int row){
         node[col][row].setAsStart();
         startNode = node[col][row];
         currentNode = startNode;
     }
-    void setGoalNode(int col, int row){
-        node[col][row].setAsGoal();
-        goalNode = node[col][row];
-        goalReached = false; // Reset goal reached flag
-        setCostOnNodes();
-    }
-    // void setGoalNode(int col, int row) {
-    //     if (!node[col][row].isSolid() && !node[col][row].isStart()) {
-    //         // Clear previous goal node
-    //         if (goalNode != null) {
-    //             goalNode.clearAsGoal();
-    //         }
-    //         // Set new goal node
-    //         node[col][row].setAsGoal();
-    //         goalNode = node[col][row];
-    //         goalReached = false; // Reset goal reached flag
-    //         System.out.println("Goal node set at column " + col + ", row " + row);
-    //         // Optionally, you can trigger the search algorithm here if needed
-    //     } else {
-    //         System.out.println("Cannot set goal node on a solid or start node.");
-    //     }
-    //     setCostOnNodes();
-    // }
-    /* 
-    void setGoalNode(int col, int row){
-        node[col][row].setAsGoal();
-        goalNode = node[col][row];
-        
-    }
-    */
-    private void setSolidNode(int col, int row){
+
+    void setSolidNode(int col, int row){
         node[col][row].setAsSolid();
     }
     void setCostOnNodes(){
@@ -118,54 +114,7 @@ public class DemoPanel extends JPanel{
         }
 
     }
-    public void search(){
-        if(goalReached == false && step < 500){
-            int col = currentNode.col;
-            int row = currentNode.row;
-            currentNode.setAsChecked();
-            checkedList.add(currentNode);
-            openList.remove(currentNode);
-            if(row-1>0){
-                openNode(node[col][row-1]);
-            }
-            if(col-1 > 0){
-                openNode(node[col-1][row]);
-            }
-            if(row+1 < maxRow){
-                openNode(node[col][row+1]);
-            }
-            if(col+1< maxCol){
-                openNode(node[col+1][row]);
-            }
-            int bestNodeIndex = 0;
-            int bestNodefCost = 999;
-            for(int i = 0; i < openList.size(); i++){
-                if(openList.get(i).fCost < bestNodefCost){
-                    bestNodeIndex = i;
-                    bestNodefCost = openList.get(i).fCost;
-                }
-                else if(openList.get(i).fCost == bestNodefCost){
-                    if(openList.get(i).gCost < openList.get(bestNodeIndex).gCost){
-                        bestNodeIndex = i;
-                    }
-                }
-            }
-            currentNode = openList.get(bestNodeIndex);
-            currentNode.setBackground(Color.red);
-            if(currentNode == goalNode){
-                goalReached = true;
-                System.out.println("*        *        ***************        Goal reached           **************************");
-            }
-            step++;
-        }
-        System.out.println("*        *        ***************The content in open list is: **************************");
-        for(Node e : openList){
-            System.out.print(e.row);
-            System.out.print(",");
-            System.out.print(e.col);
-            System.out.println();
-        }
-    }
+    
     public void autoSearch(){
         while(goalReached == false){
             int col = currentNode.col;
@@ -199,11 +148,15 @@ public class DemoPanel extends JPanel{
                 }
             }
             currentNode = openList.get(bestNodeIndex);
-            currentNode.setBackground(Color.red);
+            //currentNode.setBackground(Color.red);
             if(currentNode == goalNode){
                 goalReached = true;
-                trackPath();
+                trackPath(currentNode);
                 System.out.println("*        *        ***************        Goal reached           **************************");
+                System.out.println(currentNode.col);
+                System.out.println(currentNode.row);
+                System.out.println(goalNode.col);
+                System.out.println(goalNode.row);
             }
         }
         System.out.println("*        *        ***************The content in open list is: **************************");
@@ -221,16 +174,43 @@ public class DemoPanel extends JPanel{
             openList.add(node);
         }
     }
-    private void trackPath(){
-        Node current = goalNode;
+    private void trackPath(Node goalNodeFinal){
+        Node current = goalNodeFinal;
         while(current != startNode){
             current = current.parent;
             if(current != startNode){
                 current.setAsPath();
             }
         }
-    
-    
-    
+    }
+    void setGoalNode(int col, int row) {
+        if (!node[col][row].isSolid() && !node[col][row].isStart()) {
+            // Clear previous goal node
+            if (goalNode != null) {
+                goalNode.clearAsGoal();
+            }
+            // Set new goal node
+            node[col][row].setAsGoal();
+            goalNode = node[col][row];
+            goalReached = false; // Reset goal reached flag
+            System.out.println("Goal node set at column " + col + ", row " + row);
+            // Optionally, you can trigger the search algorithm here if needed
+        } else {
+            System.out.println("Cannot set goal node on a solid or start node.");
+        }
+        setCostOnNodes();
+    }
+    public void refreshPanel() {
+        this.removeAll();
+        setNodes();
+        setStartNode(3,6);
+        setSolidNode(10,2);
+        setSolidNode(10,4);
+        setSolidNode(10,3);
+        setSolidNode(10,5);
+        setSolidNode(10,6);
+        setSolidNode(10,7);
+        this.revalidate();
+        this.repaint();
     }
 }
