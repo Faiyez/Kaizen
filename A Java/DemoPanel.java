@@ -39,29 +39,6 @@ public class DemoPanel extends JPanel{
         setSolidNode(10,6);
         setSolidNode(10,7);
     }
-    // public DemoPanel(int goalRow, int goalCol){
-    //     this.goalCol = goalCol;
-    //     this.goalRow = goalRow;
-    //     setGoalNode(goalCol, goalRow);
-    //     this.setPreferredSize(new Dimension(screenWidth, screenHeight));
-    //     this.setBackground(Color.black);
-    //     this.setLayout(new GridLayout(maxRow, maxCol));
-    //     //KeyHandler keyHandler = new KeyHandler(this);
-    //     //this.addKeyListener(keyHandler);
-    //     //this.addMouseListener(keyHandler);        
-    //     this.setFocusable(true);
-    //     this.requestFocus();
-    //     setNodes();
-    //     setStartNode(3,6);
-    //     //setGoalNode(11,3);
-    //     setSolidNode(10,2);
-    //     setSolidNode(10,4);
-    //     setSolidNode(10,3);
-    //     setSolidNode(10,5);
-    //     setSolidNode(10,6);
-    //     setSolidNode(10,7);
-    // }
-    
     void setNodes(){
         int col = 0;
         int row = 0;
@@ -148,7 +125,7 @@ public class DemoPanel extends JPanel{
                 }
             }
             currentNode = openList.get(bestNodeIndex);
-            //currentNode.setBackground(Color.red);
+            currentNode.setBackground(Color.red);
             if(currentNode == goalNode){
                 goalReached = true;
                 trackPath(currentNode);

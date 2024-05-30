@@ -16,6 +16,9 @@ public class KeyHandler implements KeyListener, MouseListener {
         dp.setGoalNode(col, row);
         System.out.println("From Node to kh");
     }
+    public void startAutoSearch(){
+        dp.autoSearch();
+    }
     @Override
     public void keyTyped(KeyEvent e) {
         // TODO Auto-generated method stub
@@ -27,7 +30,14 @@ public class KeyHandler implements KeyListener, MouseListener {
         // TODO Auto-generated method stub
         int code = e.getKeyCode();
         if (code == KeyEvent.VK_ENTER) {
-            dp.autoSearch();
+            try{
+                dp.autoSearch();
+            }
+            catch(NullPointerException x){
+                System.out.println("Please try again.");
+                dp.autoSearch();
+            }
+            //dp.autoSearch();
         }
     }
 
@@ -42,7 +52,7 @@ public class KeyHandler implements KeyListener, MouseListener {
         int row = e.getY();
         if (e.getButton() == MouseEvent.BUTTON1) {
             //dp.setNodes();
-            
+            //dp.autoSearch();
             System.out.println("From Key Handler Left click on node at (" + col + ", " + row + ")");
         } else if (e.getButton() == MouseEvent.BUTTON3) {
             System.out.println("From Key Handler Right click on node at (" + col + ", " + row + ")");

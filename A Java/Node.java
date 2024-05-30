@@ -84,6 +84,7 @@ public class Node extends JButton implements MouseListener{
             //dp.setNodes();
             //this.setAsGoal();
             kh.refreshGoalNode(col,row);
+            kh.startAutoSearch();
             System.out.println("Left click on node at (" + col + ", " + row + ")");
         } else if (e.getButton() == MouseEvent.BUTTON3) {
             System.out.println("Right click on node at (" + col + ", " + row + ")");
