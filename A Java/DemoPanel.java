@@ -20,13 +20,13 @@ public class DemoPanel extends JPanel{
     boolean goalReached = false;
     int step = 0;
     KeyHandler keyHandler;
+    MenuPanel mp;
     public DemoPanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.black);
         this.setLayout(new GridLayout(maxRow, maxCol));
         keyHandler = new KeyHandler(this);
         this.addKeyListener(keyHandler);
-        //this.addMouseListener(keyHandler);        
         this.setFocusable(true);
         this.requestFocus();
         setNodes();
@@ -38,6 +38,24 @@ public class DemoPanel extends JPanel{
         setSolidNode(10,5);
         setSolidNode(10,6);
         setSolidNode(10,7);
+    }
+    private void initializePanel() {
+        this.setPreferredSize(new Dimension(screenWidth, screenHeight));
+        this.setBackground(Color.black);
+        this.setLayout(new GridLayout(maxRow, maxCol));
+        keyHandler = new KeyHandler(this);
+        this.addKeyListener(keyHandler);
+        this.setFocusable(true);
+        this.requestFocus();
+        setNodes();
+        setStartNode(3, 6);
+        setGoalNode(11, 3);
+        setSolidNode(10, 2);
+        setSolidNode(10, 4);
+        setSolidNode(10, 3);
+        setSolidNode(10, 5);
+        setSolidNode(10, 6);
+        setSolidNode(10, 7);
     }
     void setNodes(){
         int col = 0;
@@ -125,7 +143,7 @@ public class DemoPanel extends JPanel{
                 }
             }
             currentNode = openList.get(bestNodeIndex);
-            currentNode.setBackground(Color.red);
+            currentNode.setBackground(Color.BLUE);
             if(currentNode == goalNode){
                 goalReached = true;
                 trackPath(currentNode);
@@ -153,6 +171,9 @@ public class DemoPanel extends JPanel{
     }
     private void trackPath(Node goalNodeFinal){
         Node current = goalNodeFinal;
+        System.out.println("********   Track Path Current ********");
+        System.out.println(current.col);
+        System.out.println(current.row);
         while(current != startNode){
             current = current.parent;
             if(current != startNode){
@@ -178,6 +199,23 @@ public class DemoPanel extends JPanel{
         setCostOnNodes();
     }
     public void refreshPanel() {
+        node = new Node[maxCol][maxRow];
+        startNode = null;
+        goalNode = null;
+        currentNode = null;
+        openList.clear();
+        checkedList.clear();
+        openListToCheck.clear();
+        goalReached = false;
+        step = 0;
+
+        // Reinitialize the panel
+        initializePanel();
+        
+        // Revalidate and repaint the panel to reflect changes
+        this.revalidate();
+        this.repaint();
+        goalReached = false;
         this.removeAll();
         setNodes();
         setStartNode(3,6);

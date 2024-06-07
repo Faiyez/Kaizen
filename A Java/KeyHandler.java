@@ -3,7 +3,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class KeyHandler implements KeyListener, MouseListener {
+public class KeyHandler implements KeyListener{
     public DemoPanel dp;
     public Node node;
     int goalCol, goalRow;
@@ -16,7 +16,11 @@ public class KeyHandler implements KeyListener, MouseListener {
         dp.setGoalNode(col, row);
         System.out.println("From Node to kh");
     }
+    public void refreshPanel(){
+        dp.refreshPanel();
+    }
     public void startAutoSearch(){
+        dp.autoSearch();
         dp.autoSearch();
     }
     @Override
@@ -46,7 +50,7 @@ public class KeyHandler implements KeyListener, MouseListener {
         // TODO Auto-generated method stub
         //throw new UnsupportedOperationException("Unimplemented method 'keyReleased'");
     }
- 
+    /* 
     public void mouseClicked(MouseEvent e) {
         int col = e.getX();
         int row = e.getY();
@@ -71,5 +75,6 @@ public class KeyHandler implements KeyListener, MouseListener {
 
     @Override
     public void mouseExited(MouseEvent e) {}
+    */
 }
 
