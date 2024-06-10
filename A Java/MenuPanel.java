@@ -3,6 +3,7 @@ import javax.swing.JButton;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.*;
+import java.awt.Graphics;
 public class MenuPanel extends JPanel{
     DemoPanel dPanel;
     public MenuPanel(DemoPanel dp, KeyHandler kh){

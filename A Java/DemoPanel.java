@@ -2,13 +2,16 @@ import java.awt.Color;
 import java.awt.Dimension;
 import javax.swing.JPanel;
 import java.awt.GridLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import java.awt.Graphics;
 import java.util.ArrayList;
 // Note: Maybe we can change the background to the map of the window.
 // IF error call search node again
 public class DemoPanel extends JPanel{
-    final int maxCol = 15;
-    final int maxRow = 15;
-    final int nodeSize = 70;
+    final int maxCol = 18;
+    final int maxRow = 18;
+    final int nodeSize = 120;
     final int screenWidth = nodeSize * maxCol;
     final int screenHeight = nodeSize * maxRow;
     int goalRow, goalCol;
@@ -21,7 +24,10 @@ public class DemoPanel extends JPanel{
     int step = 0;
     KeyHandler keyHandler;
     MenuPanel mp;
+    ImageIcon backgroundImage;
+    locations lc;
     public DemoPanel() {
+        lc = new locations(this,node);
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.black);
         this.setLayout(new GridLayout(maxRow, maxCol));
@@ -30,7 +36,7 @@ public class DemoPanel extends JPanel{
         this.setFocusable(true);
         this.requestFocus();
         setNodes();
-        setStartNode(3,6);
+        setStartNode(9,17);
         setGoalNode(11,3);
         setSolidNode(10,2);
         setSolidNode(10,4);
@@ -38,7 +44,9 @@ public class DemoPanel extends JPanel{
         setSolidNode(10,5);
         setSolidNode(10,6);
         setSolidNode(10,7);
+        
     }
+    
     private void initializePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.black);
@@ -48,7 +56,7 @@ public class DemoPanel extends JPanel{
         this.setFocusable(true);
         this.requestFocus();
         setNodes();
-        setStartNode(3, 6);
+        setStartNode(9, 17);
         setGoalNode(11, 3);
         setSolidNode(10, 2);
         setSolidNode(10, 4);
@@ -56,6 +64,7 @@ public class DemoPanel extends JPanel{
         setSolidNode(10, 5);
         setSolidNode(10, 6);
         setSolidNode(10, 7);
+
     }
     void setNodes(){
         int col = 0;
@@ -69,6 +78,19 @@ public class DemoPanel extends JPanel{
                 row++;
             }
         }
+        Node[][] locationsNode = locations.setLocations();
+        col = 0;
+        row = 0;
+        while(col < maxCol && row < maxRow){
+            if(locationsNode[col][row].isTextPresent());
+                node[col][row].setText(locationsNode[col][row].getText());
+                col++;
+                if(col == maxCol){
+                    col=0;
+                    row++;
+            }
+        }
+        node[5][5].setText("Test 1");
     }
     void setStartNode(int col, int row){
         node[col][row].setAsStart();
@@ -104,7 +126,7 @@ public class DemoPanel extends JPanel{
         // F Cost = (G + h)
         node.fCost = node.gCost + node.hCost;
         if(node != startNode && node != goalNode ){
-            node.setText("<html>F: " + node.fCost + "<br>G:" + node.gCost + "</html>");
+            //node.setText("<html>F: " + node.fCost + "<br>G:" + node.gCost + "</html>");
 
         }
 
@@ -147,20 +169,20 @@ public class DemoPanel extends JPanel{
             if(currentNode == goalNode){
                 goalReached = true;
                 trackPath(currentNode);
-                System.out.println("*        *        ***************        Goal reached           **************************");
-                System.out.println(currentNode.col);
-                System.out.println(currentNode.row);
-                System.out.println(goalNode.col);
-                System.out.println(goalNode.row);
+                // System.out.println("*        *        ***************        Goal reached           **************************");
+                // System.out.println(currentNode.col);
+                // System.out.println(currentNode.row);
+                // System.out.println(goalNode.col);
+                // System.out.println(goalNode.row);
             }
         }
-        System.out.println("*        *        ***************The content in open list is: **************************");
-        for(Node e : openList){
-            System.out.print(e.row);
-            System.out.print(",");
-            System.out.print(e.col);
-            System.out.println();
-        }
+        // System.out.println("*        *        ***************The content in open list is: **************************");
+        // for(Node e : openList){
+        //     System.out.print(e.row);
+        //     System.out.print(",");
+        //     System.out.print(e.col);
+        //     System.out.println();
+        // }
     }
     private void openNode(Node node){
         if(node.open == false && node.checked == false && node.solid == false){
@@ -171,9 +193,9 @@ public class DemoPanel extends JPanel{
     }
     private void trackPath(Node goalNodeFinal){
         Node current = goalNodeFinal;
-        System.out.println("********   Track Path Current ********");
-        System.out.println(current.col);
-        System.out.println(current.row);
+        // System.out.println("********   Track Path Current ********");
+        // System.out.println(current.col);
+        // System.out.println(current.row);
         while(current != startNode){
             current = current.parent;
             if(current != startNode){
@@ -208,23 +230,15 @@ public class DemoPanel extends JPanel{
         openListToCheck.clear();
         goalReached = false;
         step = 0;
-
         // Reinitialize the panel
         initializePanel();
-        
         // Revalidate and repaint the panel to reflect changes
         this.revalidate();
         this.repaint();
         goalReached = false;
         this.removeAll();
         setNodes();
-        setStartNode(3,6);
-        setSolidNode(10,2);
-        setSolidNode(10,4);
-        setSolidNode(10,3);
-        setSolidNode(10,5);
-        setSolidNode(10,6);
-        setSolidNode(10,7);
+        setStartNode(9,17);
         this.revalidate();
         this.repaint();
     }

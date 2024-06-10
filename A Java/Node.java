@@ -2,6 +2,7 @@ import javax.swing.JButton;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.Dimension;
 // implements MouseListener
 public class Node extends JButton implements MouseListener{
     Node parent;
@@ -15,15 +16,27 @@ public class Node extends JButton implements MouseListener{
     boolean solid;
     boolean open;
     boolean checked;
+    boolean hasText;
     DemoPanel dp;
     KeyHandler kh;
     public Node(int col, int row, KeyHandler keyHandler) {
         this.col = col;
         this.row = row;
         this.kh = keyHandler;
+        this.hasText = false;
         setBackground(Color.white);
         setForeground(Color.black);
         addMouseListener(this); // Add the node itself as a mouse listener
+        // Dimension size = new Dimension(5,5);
+        // this.setPreferredSize(size);
+        // setMinimumSize(size);
+        // setMaximumSize(size);
+    }
+    public Boolean isTextPresent(){
+        return hasText;
+    }
+    public void setTextPresent(boolean value){
+        this.hasText = value;
     }
     
     public void setAsStart() {
