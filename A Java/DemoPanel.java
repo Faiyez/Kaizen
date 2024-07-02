@@ -6,14 +6,32 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import java.awt.Graphics;
 import java.util.ArrayList;
+import javax.swing.Timer;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.awt.Toolkit;
+import javax.imageio.ImageIO;
+// Note: Blue color - large rooms, yellow: medium, green: sitting space
 // Note: Maybe we can change the background to the map of the window.
 // IF error call search node again
-public class DemoPanel extends JPanel{
-    final int maxCol = 18;
-    final int maxRow = 18;
-    final int nodeSize = 120;
-    final int screenWidth = nodeSize * maxCol;
-    final int screenHeight = nodeSize * maxRow;
+public class DemoPanel<ActionEvent> extends JPanel{
+    Image character;
+    Image backgroundImage;
+    Timer timer;
+    int xVelocity = 1;
+    int yVelocity = 1;
+    int x = 0;
+    int y = 0;
+    final int maxCol = 35;
+    final int maxRow = 30;
+    final int nodeSize = 20;
+    // final int screenWidth = nodeSize * maxCol;
+    // final int screenHeight = nodeSize * maxRow;
+    final int screenWidth;
+    final int screenHeight;
     int goalRow, goalCol;
     Node[][] node = new Node[maxCol][maxRow];
     Node startNode, goalNode, currentNode;
@@ -24,29 +42,29 @@ public class DemoPanel extends JPanel{
     int step = 0;
     KeyHandler keyHandler;
     MenuPanel mp;
-    ImageIcon backgroundImage;
     locations lc;
     public DemoPanel() {
         lc = new locations(this,node);
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Dimension screenSize = toolkit.getScreenSize();
+        screenWidth = screenSize.width;
+        screenHeight = screenSize.height;
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
-        this.setBackground(Color.black);
         this.setLayout(new GridLayout(maxRow, maxCol));
         keyHandler = new KeyHandler(this);
         this.addKeyListener(keyHandler);
         this.setFocusable(true);
         this.requestFocus();
+        this.setBorder(null);
+        this.setOpaque(false);
         setNodes();
-        setStartNode(9,17);
-        setGoalNode(11,3);
-        setSolidNode(10,2);
-        setSolidNode(10,4);
-        setSolidNode(10,3);
-        setSolidNode(10,5);
-        setSolidNode(10,6);
-        setSolidNode(10,7);
-        
+        setStartNode(13,22);
+        setGoalNode(13, 4);
+        Pointer pt = new Pointer(this, keyHandler);
+        character = new ImageIcon("C:/Users/noorf/OneDrive/Documents/Kaizen/A Java/PointerRed.jpg").getImage();
+        timer = new Timer(1000, null);
     }
-    
+
     private void initializePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.black);
@@ -56,8 +74,8 @@ public class DemoPanel extends JPanel{
         this.setFocusable(true);
         this.requestFocus();
         setNodes();
-        setStartNode(9, 17);
-        setGoalNode(11, 3);
+        setStartNode(13, 22);
+        setGoalNode(1, 1);
         setSolidNode(10, 2);
         setSolidNode(10, 4);
         setSolidNode(10, 3);
@@ -69,9 +87,21 @@ public class DemoPanel extends JPanel{
     void setNodes(){
         int col = 0;
         int row = 0;
+        int [][] locationsCorridors = locations.getCorridorNodes();
         while(col < maxCol && row < maxRow){
             node[col][row] = new Node(col,row,keyHandler);
+            node[col][row].setAsSolid();
+            //node[col][row].setBackground(Color.black);
+            /*
+             * Nodes can be made transparent below
+             */
+            node[col][row].setBorder(null);
+            node[col][row].setBorderPainted(false);
+            node[col][row].setContentAreaFilled(false);
+            node[col][row].setOpaque(false);
             this.add(node[col][row]);
+            //node[col][row].setText("<html>C: " + col + "<br>R:" + row + "</html>");
+            node[col][row].setText("<html>C: " + col + "</html>");
             col++;
             if(col == maxCol){
                 col=0;
@@ -82,15 +112,27 @@ public class DemoPanel extends JPanel{
         col = 0;
         row = 0;
         while(col < maxCol && row < maxRow){
-            if(locationsNode[col][row].isTextPresent());
+            //node[col][row].setText(Integer.toString(row));
+            if(locationsNode[col][row].isTextPresent()){
                 node[col][row].setText(locationsNode[col][row].getText());
-                col++;
-                if(col == maxCol){
-                    col=0;
-                    row++;
             }
+            /*
+            Corridors can be set below: 
+            */                
+            if(locationsCorridors[col][row] == 1){
+                node[col][row].setAsCorridor();
+                //node[col][row].setBorder(null);
+                node[col][row].setBorderPainted(true);
+                node[col][row].setContentAreaFilled(true);
+                node[col][row].setOpaque(true);
+                //node[col][row].setBackground(Color.black);
+            }
+            col++;
+            if(col == maxCol){
+                col=0;
+                row++;
+            } 
         }
-        node[5][5].setText("Test 1");
     }
     void setStartNode(int col, int row){
         node[col][row].setAsStart();
@@ -116,73 +158,74 @@ public class DemoPanel extends JPanel{
     // G Cost = Distance between current node and starting node
     private void getCost(Node node){
         // Calculating G Cost
-        int xDistance = Math.abs(startNode.col - node.col);
-        int yDistance = Math.abs(startNode.row - node.row);
-        node.gCost = xDistance + yDistance;
-         // H Cost = Distance between current position and finish node
-        xDistance = Math.abs(goalNode.col - node.col);
-        yDistance = Math.abs(goalNode.row - node.row); 
-        node.hCost = xDistance + yDistance;
-        // F Cost = (G + h)
-        node.fCost = node.gCost + node.hCost;
-        if(node != startNode && node != goalNode ){
-            //node.setText("<html>F: " + node.fCost + "<br>G:" + node.gCost + "</html>");
+        if (goalNode != null){
+            int xDistance = Math.abs(startNode.col - node.col);
+            int yDistance = Math.abs(startNode.row - node.row);
+            node.gCost = xDistance + yDistance;
+            // H Cost = Distance between current position and finish node
+            xDistance = Math.abs(goalNode.col - node.col);
+            yDistance = Math.abs(goalNode.row - node.row); 
+            node.hCost = xDistance + yDistance;
+            // F Cost = (G + h)
+            node.fCost = node.gCost + node.hCost;
+            
+            if(node != startNode && node != goalNode ){
+                //node.setText("<html>F: " + node.fCost + "<br>G:" + node.gCost + "</html>");
 
+            }
         }
+    
 
     }
     
-    public void autoSearch(){
-        while(goalReached == false){
+    public void autoSearch() {
+        while (!goalReached) {
             int col = currentNode.col;
             int row = currentNode.row;
             currentNode.setAsChecked();
             checkedList.add(currentNode);
             openList.remove(currentNode);
-            if(row-1>0){
-                openNode(node[col][row-1]);
+    
+            if (row - 1 >= 0) {
+                openNode(node[col][row - 1]);
             }
-            if(col-1 > 0){
-                openNode(node[col-1][row]);
+            if (col - 1 >= 0) {
+                openNode(node[col - 1][row]);
             }
-            if(row+1 < maxRow){
-                openNode(node[col][row+1]);
+            if (row + 1 < maxRow) {
+                openNode(node[col][row + 1]);
             }
-            if(col+1< maxCol){
-                openNode(node[col+1][row]);
+            if (col + 1 < maxCol) {
+                openNode(node[col + 1][row]);
             }
+    
             int bestNodeIndex = 0;
-            int bestNodefCost = 999;
-            for(int i = 0; i < openList.size(); i++){
-                if(openList.get(i).fCost < bestNodefCost){
+            int bestNodefCost = Integer.MAX_VALUE;
+            for (int i = 0; i < openList.size(); i++) {
+                if (openList.get(i).fCost < bestNodefCost) {
                     bestNodeIndex = i;
                     bestNodefCost = openList.get(i).fCost;
-                }
-                else if(openList.get(i).fCost == bestNodefCost){
-                    if(openList.get(i).gCost < openList.get(bestNodeIndex).gCost){
+                } else if (openList.get(i).fCost == bestNodefCost) {
+                    if (openList.get(i).gCost < openList.get(bestNodeIndex).gCost) {
                         bestNodeIndex = i;
                     }
                 }
             }
+    
             currentNode = openList.get(bestNodeIndex);
-            currentNode.setBackground(Color.BLUE);
-            if(currentNode == goalNode){
+            currentNode.setOpaque(true);
+            currentNode.setBorder(null);
+            currentNode.setBorderPainted(false);
+            currentNode.setContentAreaFilled(false);
+            currentNode.setOpaque(false);
+            //currentNode.setBackground(Color.BLUE);
+            if (currentNode == goalNode) {
                 goalReached = true;
+                currentNode.setBackground(Color.WHITE);
+                currentNode.setForeground(Color.black);
                 trackPath(currentNode);
-                // System.out.println("*        *        ***************        Goal reached           **************************");
-                // System.out.println(currentNode.col);
-                // System.out.println(currentNode.row);
-                // System.out.println(goalNode.col);
-                // System.out.println(goalNode.row);
             }
         }
-        // System.out.println("*        *        ***************The content in open list is: **************************");
-        // for(Node e : openList){
-        //     System.out.print(e.row);
-        //     System.out.print(",");
-        //     System.out.print(e.col);
-        //     System.out.println();
-        // }
     }
     private void openNode(Node node){
         if(node.open == false && node.checked == false && node.solid == false){
@@ -191,17 +234,20 @@ public class DemoPanel extends JPanel{
             openList.add(node);
         }
     }
-    private void trackPath(Node goalNodeFinal){
+    private void trackPath(Node goalNodeFinal) {
         Node current = goalNodeFinal;
-        // System.out.println("********   Track Path Current ********");
-        // System.out.println(current.col);
-        // System.out.println(current.row);
-        while(current != startNode){
+        while (current != startNode) {
             current = current.parent;
-            if(current != startNode){
+            current.setBorderPainted(true);
+            current.setContentAreaFilled(true);
+            current.setOpaque(true);
+            current.setBackground(Color.GREEN);
+            if (current != startNode) {
                 current.setAsPath();
             }
         }
+        
+       
     }
     void setGoalNode(int col, int row) {
         if (!node[col][row].isSolid() && !node[col][row].isStart()) {
@@ -238,8 +284,29 @@ public class DemoPanel extends JPanel{
         goalReached = false;
         this.removeAll();
         setNodes();
-        setStartNode(9,17);
+        setStartNode(13,22);
         this.revalidate();
         this.repaint();
+    }
+    
+    public void paintComponent(Graphics g){
+        super.paintComponent(g);
+        BufferedImage background;
+        try {
+            background = ImageIO.read(new File("C:/Users/noorf/OneDrive/Documents/Kaizen/A Java/rooms.png"));
+            //g.drawImage(background,x,y,this);
+            int panelWidth = getWidth();
+            int panelHeight = getHeight();
+            g.drawImage(background, 0, 0, panelWidth, panelHeight, this);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        //Image background = new ImageIcon("C:/Users/noorf/OneDrive/Documents/Kaizen/A Java/map.jpg");
+        //g.drawImage(background,x,y,this);
+    }
+    
+    public void actionPerformed(ActionEvent e){
+
     }
 }

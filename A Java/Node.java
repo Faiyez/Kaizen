@@ -1,3 +1,4 @@
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
@@ -24,8 +25,9 @@ public class Node extends JButton implements MouseListener{
         this.row = row;
         this.kh = keyHandler;
         this.hasText = false;
-        setBackground(Color.white);
-        setForeground(Color.black);
+        this.setBorderPainted(true);
+        this.setContentAreaFilled(false);
+        this.setOpaque(false);
         addMouseListener(this); // Add the node itself as a mouse listener
         // Dimension size = new Dimension(5,5);
         // this.setPreferredSize(size);
@@ -43,7 +45,7 @@ public class Node extends JButton implements MouseListener{
         setBackground(Color.blue);
         setForeground(Color.white);
         setText("Start");
-        start = true;
+        this.start = true;
     }
     
     public void setAsGoal() {
@@ -51,16 +53,24 @@ public class Node extends JButton implements MouseListener{
         setForeground(Color.black);
         setText("Goal");
         this.goal = true;
+        ImageIcon icon = new ImageIcon("C:/Users/noorf/OneDrive/Documents/Kaizen/A Java/PointerRed.png");
+        this.setIcon(icon);
+        
     }
     
     public void setAsSolid(){
         setBackground(Color.black);
         setForeground(Color.black);
-        solid = true;
+        this.solid = true;
+    }
+    public void setAsCorridor(){
+        setBackground(Color.black);
+        setForeground(Color.GRAY);
+        this.solid = false;
     }
     
     public void setAsOpen(){
-        open = true;
+        this.open = true;
         //setBackground(Color.pink);
         //setForeground(Color.green);
     }
@@ -70,7 +80,7 @@ public class Node extends JButton implements MouseListener{
             //setBackground(Color.gray);
             //setForeground(Color.black);
         }
-        checked = true;
+        this.checked = true;
     }
     
     public void setAsPath(){

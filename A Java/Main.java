@@ -9,7 +9,6 @@ public class Main{
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
         JPanel mainPanel = new JPanel(new BorderLayout());
-        
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int width = (int) (screenSize.width * 0.9);
         int height = (int) (screenSize.height * 0.9);
@@ -18,7 +17,7 @@ public class Main{
         KeyHandler kh = new KeyHandler(dp);
         MenuPanel mp = new MenuPanel(dp,kh);
         mainPanel.add(dp, BorderLayout.CENTER);
-        mainPanel.add(mp, BorderLayout.SOUTH);
+        //mainPanel.add(mp, BorderLayout.SOUTH);
         window.add(mainPanel);
         window.pack();
         window.setLocationRelativeTo(null);
