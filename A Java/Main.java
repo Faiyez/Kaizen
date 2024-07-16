@@ -17,7 +17,7 @@ public class Main{
         KeyHandler kh = new KeyHandler(dp);
         MenuPanel mp = new MenuPanel(dp,kh);
         mainPanel.add(dp, BorderLayout.CENTER);
-        //mainPanel.add(mp, BorderLayout.SOUTH);
+        mainPanel.add(mp, BorderLayout.SOUTH);
         window.add(mainPanel);
         window.pack();
         window.setLocationRelativeTo(null);

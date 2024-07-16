@@ -14,6 +14,7 @@ public class KeyHandler implements KeyListener{
     public void refreshGoalNode(int col, int row){
         dp.refreshPanel();
         dp.setGoalNode(col, row);
+        dp.autoSearch();
         System.out.println("From Node to kh");
     }
     public void refreshPanel(){

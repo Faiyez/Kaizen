@@ -101,7 +101,7 @@ public class DemoPanel<ActionEvent> extends JPanel{
             node[col][row].setOpaque(false);
             this.add(node[col][row]);
             //node[col][row].setText("<html>C: " + col + "<br>R:" + row + "</html>");
-            node[col][row].setText("<html>C: " + col + "</html>");
+            //node[col][row].setText("<html>C: " + col + "</html>");
             col++;
             if(col == maxCol){
                 col=0;
@@ -113,6 +113,7 @@ public class DemoPanel<ActionEvent> extends JPanel{
         row = 0;
         while(col < maxCol && row < maxRow){
             //node[col][row].setText(Integer.toString(row));
+            //node[col][row].setText("<html>R: " + row + "</html>");
             if(locationsNode[col][row].isTextPresent()){
                 node[col][row].setText(locationsNode[col][row].getText());
             }
@@ -221,8 +222,8 @@ public class DemoPanel<ActionEvent> extends JPanel{
             //currentNode.setBackground(Color.BLUE);
             if (currentNode == goalNode) {
                 goalReached = true;
-                currentNode.setBackground(Color.WHITE);
-                currentNode.setForeground(Color.black);
+                //currentNode.setBackground(Color.WHITE);
+                //currentNode.setForeground(Color.black);
                 trackPath(currentNode);
             }
         }
@@ -305,7 +306,9 @@ public class DemoPanel<ActionEvent> extends JPanel{
         //Image background = new ImageIcon("C:/Users/noorf/OneDrive/Documents/Kaizen/A Java/map.jpg");
         //g.drawImage(background,x,y,this);
     }
-    
+    Node[][] getAllLocations(){
+        return locations.setLocations();
+    }
     public void actionPerformed(ActionEvent e){
 
     }

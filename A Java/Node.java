@@ -59,13 +59,13 @@ public class Node extends JButton implements MouseListener{
     }
     
     public void setAsSolid(){
-        setBackground(Color.black);
-        setForeground(Color.black);
+        setBackground(Color.white);
+        //setForeground(Color.black);
         this.solid = true;
     }
     public void setAsCorridor(){
-        setBackground(Color.black);
-        setForeground(Color.GRAY);
+        //setBackground(Color.black);
+        //setForeground(Color.GRAY);
         this.solid = false;
     }
     
