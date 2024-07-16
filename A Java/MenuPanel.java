@@ -1,5 +1,4 @@
 import javax.swing.JPanel;
-import javax.swing.Border;
 import javax.swing.Action;
 import javax.swing.JButton;
 import java.awt.Dimension;
